@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>非标准数组对象转标准 JSON</title>
+	<link rel="stylesheet" href="https://cdn.bootcss.com/highlight.js/9.12.0/styles/darcula.min.css">
+	<style type="text/css">
+		html, body {
+			height: 100%;
+			width: 100%;
+		}
+		* {
+			margin: 0;
+			padding: 0;
+		}
+		#app {
+			background-color: #fafafa;
+			position: absolute;
+			left: 0;
+			top:0;
+			right: 0;
+			bottom:0;
+		}
+		.input {
+			position: absolute;
+			left: 0;
+			top:0;
+			bottom:0;
+			padding: 20px;
+			width: 600px;
+		}
+		textarea, pre, code {
+			font-family: Consolas, Monaco, "Andale Mono", "Courier New";
+			font-size: 14px;
+			white-space: pre-line;
+		}
+		textarea {
+			border: 1px #eee solid;
+			height: 100%;
+			outline: none;
+			padding: 20px;
+			resize: none;
+			width: 100%;
+			border-radius: 4px;
+			box-sizing: border-box;
+			z-index: 1;
+		}
+		pre {
+			background-color: #333;
+			color: #ccc;
+			overflow: auto;
+			padding: 20px;
+			position: absolute;
+			left: 640px;
+			right: 20px;
+			bottom: 20px;
+			top: 20px;
+			z-index: 2;
+			border-radius: 4px;
+		}
+		.handler-copy {
+			background-color: #09f;
+			color: white;
+			border: none;
+			border-radius: 3px;
+			cursor: pointer;
+			line-height: 32px;
+			outline: 0;			
+			padding: 0 10px;
+			position: absolute;
+			right: 40px;
+			top: 40px;
+			z-index: 3;
+		}
+		.header {
+			background-color: white;
+			border-bottom: 1px #eee solid;
+			padding: 10px;
+			position: absolute;
+			left: 0;
+			right: 0;
+			top: 0;
+			z-index: 2;
+		}
+		.header .logo {
+			font-size: 20px;
+			line-height: 48px;
+			padding-left: 24px;
+			padding-right: 24px;
+		}
+		.body {
+			position: absolute;
+			left: 0;
+			right: 0;
+			top: 69px;
+			bottom: 64px;
+			z-index: 1;
+		}
+		.footer {
+			background-color: white;
+			border-top: 1px #eee solid;
+			padding: 10px;
+			position: absolute;
+			left: 0;
+			right: 0;
+			bottom: 0;
+			z-index: 0;
+		}
+		.footer p {
+			color: #999;
+			font-size: 12px;
+			line-height: 44px;
+			padding-left: 32px;
+			padding-right: 32px;
+		}
+	</style>
+</head>
+<body>
+
+<div id="app">
+	<div class="header">
+		<h1 class="logo">非标准数组对象转标准 JSON</h1>
+	</div>
+	<div class="body">
+		<div class="input">
+			<textarea v-model="input" placeholder="1、从 IDE 编辑器复制数据；
+			2、粘贴数据到此"></textarea>
+		</div>
+		<pre><code class="json">{{output}}</code></pre>
+		<button class="handler-copy" @click="copyToClipboard">复制到剪贴板</button>
+	</div>
+	<div class="footer">
+		<p>Copyright &copy; 2018</p>
+	</div>
+</div>
+
+<script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
+<script src="https://cdn.bootcss.com/highlight.js/9.12.0/languages/json.min.js"></script>
+<script src="https://cdn.bootcss.com/vue/2.5.16/vue.min.js"></script>
+<script>
+
+	(function(){
+		var App = new Vue({
+
+			el:'#app',
+
+			data(){
+				return {
+					input: '',
+				};
+			},
+
+			computed: {
+
+				output: function(){
+					if(!this.input) return '';
+					let result = '';
+					try {
+						result = this.input.replace(/(null|Object|String|Number|NaN)/ig, '\'$1\'');
+						result = eval('('+ result +')');
+						result = JSON.stringify(result);
+					} catch(err) {
+						result = '格式错误' + err;
+					}
+
+					return result;
+				},
+
+			},
+
+			watch: {
+
+				output: function() {
+					hljs.initHighlightingOnLoad();
+				},
+
+			},
+
+			methods: {
+
+				copyToClipboard() {
+					// if(!this.output) return alert('请输入内容');
+
+					// this.$copyText(this.output).then(() => {
+					// 	alert('复制成功');
+					// });
+				},
+
+			},
+
+			mounted() {
+				
+			},
+		});
+
+	})();
+</script>
+</body>
+</html>
